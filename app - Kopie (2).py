@@ -132,16 +132,7 @@ if "keypoints_tracker" not in st.session_state:
 if "runner" not in st.session_state:
     st.session_state["runner"] = None
 
-st.title("Padel Analytics")
 
-with st.form("run-video"):
-    upload_video_path = st.text_input(
-        "Upload video: ",
-        INPUT_VIDEO_PATH,
-    )
-    upload_video = st.form_submit_button("Upload")
-
-if upload_video or st.session_state["video"] is not None:
 
     if upload_video:
         st.session_state["df"] = None

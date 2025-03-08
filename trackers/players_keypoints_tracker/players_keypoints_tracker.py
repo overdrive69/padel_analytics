@@ -301,25 +301,29 @@ class PlayerKeypointsTracker(Tracker):
                 players_keypoints_detection = players_keypoints_detection.unsqueeze(0)
 
             for player_keypoints_detection in players_keypoints_detection:
-                player_keypoints = PlayerKeypoints(
-                    player_keypoints=[
-                        PlayerKeypoint(
-                            id=i,
-                            name=PlayerKeypoints.KEYPOINTS_NAMES[i],
-                            xy=(
-                                keypoint[0].item() * ratio_x,
-                                keypoint[1].item() * ratio_y,
+                player_keypoints = PlayerKeypoints(player_keypoints=[])
+
+                for i, keypoint in enumerate(player_keypoints_detection):
+                    if keypoint.numel() == 2:
+                        player_keypoints.player_keypoints.append(
+                            PlayerKeypoint(
+                                id=i,
+                                name=PlayerKeypoints.KEYPOINTS_NAMES[i],
+                                xy=(
+                                    keypoint[0].item() * ratio_x,
+                                    keypoint[1].item() * ratio_y,
+                                )
                             )
                         )
-                        for i, keypoint in enumerate(player_keypoints_detection)
-                    ]
-                )
+                    else:
+                        print(f"Skipped keypoint {i} due to unexpected shape {keypoint.shape}.")
 
                 players_keypoints.append(player_keypoints)
             
             predictions.append(PlayersKeypoints(players_keypoints))
-        
+
         return predictions
+
     
     def predict_frames(self, frame_generator: Iterable[np.ndarray], **kwargs):
         raise NoPredictFrames()
